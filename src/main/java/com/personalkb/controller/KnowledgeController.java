@@ -8,6 +8,7 @@ import com.personalkb.vo.KnowledgeListVO;
 import com.personalkb.vo.PageResult;
 import org.springframework.web.bind.annotation.*;
 import com.personalkb.dto.KnowledgeUpdateDTO;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -78,14 +79,6 @@ public class KnowledgeController {
         return Result.success(null);
     }
 
-    @GetMapping("/search")
-    public Result<List<KnowledgeListVO>> search(
-            @RequestParam String keyword) {
-
-        return Result.success(
-                knowledgeService.search(keyword)
-        );
-    }
 
     @GetMapping("/page")
     public Result<PageResult<KnowledgeListVO>> page(
@@ -99,6 +92,16 @@ public class KnowledgeController {
                         page,
                         pageSize
                 )
+        );
+    }
+
+    @GetMapping("/search")
+    public Result<List<KnowledgeListVO>> search(
+            @RequestParam String keyword
+    ){
+
+        return Result.success(
+                knowledgeService.search(keyword)
         );
     }
 }

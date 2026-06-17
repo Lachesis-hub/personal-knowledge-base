@@ -18,9 +18,13 @@ public class KnowledgeServiceImpl implements KnowledgeService {
 
     private final KnowledgeMapper knowledgeMapper;
 
-    public KnowledgeServiceImpl(KnowledgeMapper knowledgeMapper) {
+
+    public KnowledgeServiceImpl(
+            KnowledgeMapper knowledgeMapper) {
+
         this.knowledgeMapper = knowledgeMapper;
     }
+
 
     @Override
     public void add(KnowledgeAddDTO dto) {
@@ -43,10 +47,21 @@ public class KnowledgeServiceImpl implements KnowledgeService {
                 dto.getContent()
         );
 
+        knowledge.setSummary(
+                dto.getSummary()
+        );
+
+        knowledge.setTags(
+                dto.getTags()
+        );
+
+
         knowledgeMapper.insert(
                 knowledge
         );
     }
+
+
 
     @Override
     public List<KnowledgeListVO> list() {
@@ -56,12 +71,16 @@ public class KnowledgeServiceImpl implements KnowledgeService {
                         UserContext.get()
                 );
 
+
         return convertToVO(list);
     }
+
+
 
     @Override
     public List<KnowledgeListVO> listByCategory(
             Long categoryId) {
+
 
         List<Knowledge> list =
                 knowledgeMapper.selectByCategoryId(
@@ -69,8 +88,11 @@ public class KnowledgeServiceImpl implements KnowledgeService {
                         categoryId
                 );
 
+
         return convertToVO(list);
     }
+
+
 
     @Override
     public Knowledge detail(Long id) {
@@ -81,6 +103,8 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         );
     }
 
+
+
     @Override
     public void delete(Long id) {
 
@@ -90,125 +114,195 @@ public class KnowledgeServiceImpl implements KnowledgeService {
                         UserContext.get()
                 );
 
+
         if (knowledge == null) {
             throw new RuntimeException("知识不存在");
         }
 
+
         knowledgeMapper.deleteById(id);
     }
 
+
+
     @Override
-    public void update(KnowledgeUpdateDTO dto) {
+    public void update(
+            KnowledgeUpdateDTO dto) {
+
+
         Knowledge exist =
                 knowledgeMapper.selectByIdAndUserId(
                         dto.getId(),
                         UserContext.get()
                 );
 
+
         if (exist == null) {
             throw new RuntimeException("知识不存在");
         }
 
-        Knowledge knowledge = new Knowledge();
+
+        Knowledge knowledge =
+                new Knowledge();
+
 
         knowledge.setId(
                 dto.getId()
         );
 
+
         knowledge.setCategoryId(
                 dto.getCategoryId()
         );
+
 
         knowledge.setTitle(
                 dto.getTitle()
         );
 
+
         knowledge.setContent(
                 dto.getContent()
         );
+
+
+        knowledge.setSummary(
+                dto.getSummary()
+        );
+
+
+        knowledge.setTags(
+                dto.getTags()
+        );
+
 
         knowledgeMapper.update(
                 knowledge
         );
     }
 
+
+
     @Override
     public List<KnowledgeListVO> search(
             String keyword) {
 
-        List<Knowledge> list =
-                knowledgeMapper.search(
-                        UserContext.get(),
-                        keyword
-                );
 
-        return convertToVO(list);
+        Long userId =
+                UserContext.get();
+
+
+        System.out.println(
+                "搜索用户ID=" + userId
+        );
+
+
+        System.out.println(
+                "搜索关键词=" + keyword
+        );
+
+
+        return knowledgeMapper.search(
+                userId,
+                keyword
+        );
     }
+
+
+
 
     @Override
     public PageResult<KnowledgeListVO> page(
             Integer page,
             Integer pageSize) {
 
-        Long total =
-                knowledgeMapper.countByUserId(
-                        UserContext.get()
-                );
 
+        Long userId =
+                UserContext.get();
+
+
+        //计算偏移量
         Integer offset =
                 (page - 1) * pageSize;
 
+
+        //查询总数
+        Long total =
+                knowledgeMapper.countByUserId(
+                        userId
+                );
+
+
+        //查询分页数据
         List<Knowledge> list =
                 knowledgeMapper.selectPage(
-                        UserContext.get(),
+                        userId,
                         offset,
                         pageSize
                 );
 
+
+        List<KnowledgeListVO> records =
+                convertToVO(list);
+
+
+
         PageResult<KnowledgeListVO> result =
                 new PageResult<>();
 
-        result.setTotal(total);
+
+        result.setTotal(
+                total
+        );
+
 
         result.setRecords(
-                convertToVO(list)
+                records
         );
+
 
         return result;
     }
 
-    /**
-     * Entity -> VO
-     */
+
     private List<KnowledgeListVO> convertToVO(
             List<Knowledge> knowledgeList) {
+
 
         List<KnowledgeListVO> result =
                 new ArrayList<>();
 
+
         for (Knowledge knowledge : knowledgeList) {
+
 
             KnowledgeListVO vo =
                     new KnowledgeListVO();
+
 
             vo.setId(
                     knowledge.getId()
             );
 
+
             vo.setCategoryId(
                     knowledge.getCategoryId()
             );
+
 
             vo.setTitle(
                     knowledge.getTitle()
             );
 
+
             vo.setCreateTime(
                     knowledge.getCreateTime()
             );
 
+
             result.add(vo);
         }
+
 
         return result;
     }

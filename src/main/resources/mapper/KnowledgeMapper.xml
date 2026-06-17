@@ -87,20 +87,6 @@
 
     </select>
 
-    <select id="search"
-            resultType="com.personalkb.entity.Knowledge">
-
-        select *
-        from knowledge
-        where user_id = #{userId}
-          and (
-            title like concat('%',#{keyword},'%')
-                or content like concat('%',#{keyword},'%')
-            )
-        order by id desc
-
-    </select>
-
     <select id="countByUserId"
             resultType="java.lang.Long">
 
@@ -121,4 +107,31 @@
 
     </select>
 
+    <select id="search"
+            resultType="com.personalkb.vo.KnowledgeListVO">
+
+        select
+            id,
+            title,
+            content,
+            summary,
+            tags,
+            category_id,
+            create_time
+
+        from knowledge
+
+        where user_id = #{userId}
+
+          and
+            (
+                title like concat('%',#{keyword},'%')
+                    or content like concat('%',#{keyword},'%')
+                    or summary like concat('%',#{keyword},'%')
+                    or tags like concat('%',#{keyword},'%')
+                )
+
+        order by create_time desc
+
+    </select>
 </mapper>

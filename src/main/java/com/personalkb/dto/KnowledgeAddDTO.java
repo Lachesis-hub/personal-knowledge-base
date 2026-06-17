@@ -10,4 +10,8 @@ public class KnowledgeAddDTO {
     private String title;
 
     private String content;
+
+    private String summary;
+
+    private String tags;
 }

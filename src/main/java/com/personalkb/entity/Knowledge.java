@@ -20,4 +20,8 @@ public class Knowledge {
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
+
+    private String summary;
+
+    private String tags;
 }

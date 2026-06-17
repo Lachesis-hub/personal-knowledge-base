@@ -34,4 +34,5 @@ public interface KnowledgeService {
             Integer page,
             Integer pageSize
     );
+
 }

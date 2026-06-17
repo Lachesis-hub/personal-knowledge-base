@@ -12,4 +12,8 @@ public class KnowledgeUpdateDTO {
     private String title;
 
     private String content;
+
+    private String summary;
+
+    private String tags;
 }
